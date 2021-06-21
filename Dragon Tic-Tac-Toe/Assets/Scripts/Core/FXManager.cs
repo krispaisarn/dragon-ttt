@@ -2,17 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FXManager : MonoBehaviour
+public class FXManager : BaseMono
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public static FXManager Instance;
 
-    // Update is called once per frame
-    void Update()
+    public override void Initialize()
     {
-        
+        Instance ??= this;
     }
 }

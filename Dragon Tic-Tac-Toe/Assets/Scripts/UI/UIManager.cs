@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
+namespace TTT.UI
 {
-    // Start is called before the first frame update
-    void Start()
+    public class UIManager : MonoBehaviour
     {
-        
-    }
+        public static UIManager Instance;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public void Initialize()
+        {
+            Instance ??= this;
+        }
+
+        public void ShowResult()
+        {
+
+        }
     }
 }
