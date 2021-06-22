@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TTT.Settings;
+using TTT.UI;
 
 public class GameManager : BaseMono
 {
-
     public static GameManager Instance;
     // Start is called before the first frame update
     public GameController gameController;
+    public GameSettings gameSettings;
+    public UIManager uIManager;
 
     private void Awake()
     {
@@ -20,7 +23,8 @@ public class GameManager : BaseMono
 
     public override void Initialize()
     {
-        //   gameController.Init();
+        gameController.Initialize();
+        gameSettings.Initialize();
     }
 
     private void Update()

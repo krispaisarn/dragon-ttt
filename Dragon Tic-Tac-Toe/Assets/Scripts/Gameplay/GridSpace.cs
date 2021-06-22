@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class GridSpace : MonoBehaviour
 {
-    public GameController gameController { get => GameManager.Instance.gameController; }
-    public MarkType mark;
-    public Vector2 tilePos;
-    public Alignment alignment;
+    [ReadOnly] public MarkType mark;
+    [ReadOnly] public Vector2 tilePos;
+    [ReadOnly] public Alignment alignment;
+
     [SerializeField] private Image markImage;
+    private GameController _gameController { get => GameManager.Instance.gameController; }
     private Button _button;
 
     public void Initialize()
@@ -23,9 +24,9 @@ public class GridSpace : MonoBehaviour
 
     public void SetGridMark(MarkType markType = MarkType.None)
     {
-        mark = gameController.currentTurn;
+        mark = _gameController.currentTurn;
         SetMarkImage(mark);
-        gameController.CheckCondition(this);
+        _gameController.CheckCondition(this);
 
         _button.interactable = false;
 
@@ -35,10 +36,10 @@ public class GridSpace : MonoBehaviour
             switch (markType)
             {
                 case MarkType.X:
-                    markSprite = gameController.spriteXmark;
+                    markSprite = _gameController.spriteXmark;
                     break;
                 case MarkType.O:
-                    markSprite = gameController.spriteOmark;
+                    markSprite = _gameController.spriteOmark;
                     break;
             }
             markImage.sprite = markSprite;

@@ -4,8 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 
-
-public class GameController : MonoBehaviour
+public class GameController : BaseMono
 {
     public UIManager uiManager { get => UIManager.Instance; }
     [Header("XO Sprite")]
@@ -18,11 +17,7 @@ public class GameController : MonoBehaviour
 
     private List<GridSpace> _gridSpaces = new List<GridSpace>();
 
-    private void Awake()
-    {
-        Init();
-    }
-    public void Init()
+    public override void Initialize()
     {
         _gridSpaces.Clear();
         _gridSpaces.AddRange(gridGroup.GetComponentsInChildren<GridSpace>());
