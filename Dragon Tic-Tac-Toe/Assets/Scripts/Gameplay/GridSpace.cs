@@ -22,6 +22,13 @@ public class GridSpace : MonoBehaviour
         markImage.gameObject.SetActive(false);
     }
 
+    public void Reset()
+    {
+        mark = MarkType.None;
+        markImage.sprite = null;
+        _button.interactable = true;
+    }
+
     public void SetGridMark(MarkType markType = MarkType.None)
     {
         mark = _gameController.currentTurn;

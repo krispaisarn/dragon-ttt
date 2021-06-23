@@ -1,12 +1,15 @@
 using TTT.UI;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 
 public class GameController : BaseMono
 {
-    public UIManager uiManager { get => UIManager.Instance; }
+    public GameManager gameManager { get => GameManager.Instance; }
+    public UIManager uiManager { get => gameManager.uIManager; }
+
     [Header("XO Sprite")]
     public Sprite spriteXmark;
     public Sprite spriteOmark;
@@ -17,6 +20,7 @@ public class GameController : BaseMono
 
     private List<GridSpace> _gridSpaces = new List<GridSpace>();
 
+    public bool isSkip;
     public override void Initialize()
     {
         _gridSpaces.Clear();
@@ -29,6 +33,11 @@ public class GameController : BaseMono
         }
 
         RandomTurn();
+
+        if (isSkip)
+        {
+            uiManager.SetTopLayout(gameManager.gameSettings.gameSettingsData);
+        }
     }
 
     void RandomTurn()
@@ -45,20 +54,25 @@ public class GameController : BaseMono
 
     public void CheckCondition(GridSpace gridSpace = null)
     {
-
+        bool isGameEnd = false;
         if (SearchNextNode(gridSpace))
         {
-            debugText.text = "GameOver";
-            return;
+            isGameEnd = true;
         }
 
         foreach (var node in FindNeighborGrids(gridSpace))
         {
             if (SearchNextNode(node))
             {
-                debugText.text = "GameOver";
-                return;
+                isGameEnd = true;
             }
+        }
+
+        if (isGameEnd)
+        {
+            debugText.text = "GameOver";
+            GameEnd();
+            return;
         }
 
         ChangeTurn();
@@ -128,12 +142,54 @@ public class GameController : BaseMono
 
     private void GameEnd()
     {
-        uiManager.ShowResult();
+        //uiManager.ShowResult();
+
+        int roundWinnderCount = 0;
+        if (currentTurn == MarkType.X)
+        {
+            xCount++;
+            roundWinnderCount = xCount;
+
+        }
+        else if (currentTurn == MarkType.O)
+        {
+            oCount++;
+            roundWinnderCount = oCount;
+        }
+        else
+            Debug.Log("Incorrect Type!!!");
+
+        uiManager.SetRoundSlot(currentTurn, roundWinnderCount);
+
+        if (xCount < roundCount && oCount < roundCount)
+        {
+            RestartRound();
+        }
+        else
+        {
+            debugText.text = "Game Ends!!!";
+        }
+    }
+    int xCount, oCount;
+    public int roundCount;
+
+    IEnumerator OnRestartRound()
+    {
+        debugText.text = currentTurn + " Win round";
+
+        yield return new WaitForSeconds(1);
+
+        foreach (var grid in _gridSpaces)
+        {
+            grid.Reset();
+        }
+
+        RandomTurn();
     }
 
-    public void RestartGame()
+    public void RestartRound()
     {
-
+        StartCoroutine(OnRestartRound());
     }
 }
 

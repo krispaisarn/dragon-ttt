@@ -8,16 +8,7 @@ public class GameSettingsData : ScriptableObject
     [Header("Value")]
     public int round = 1;
     public int time = 0;
-    [SerializeField] public int size = 3;
-    public int Size
-    {
-        get { return size; }
-        set
-        {
-            if (value > minSize || value < minSize)
-                size = value;
-        }
-    }
+    public int size = 3;
 
     [Header("Game Settings")]
     public int[] rounds = new int[4] { 5, 10, 30, 0 };

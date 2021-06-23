@@ -25,12 +25,14 @@ public class GameManager : BaseMono
     {
         gameController.Initialize();
         gameSettings.Initialize();
+        uIManager.Initialize();
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
             RestartGame();
+
     }
 
     private void RestartGame()

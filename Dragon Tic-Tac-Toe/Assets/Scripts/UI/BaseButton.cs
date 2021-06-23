@@ -18,11 +18,12 @@ namespace TTT.UI
         }
         public void SetText(string text)
         {
+            if (text == "0")
+                text = "X";
             tmpText.text = text;
         }
         public void SetEvent(UnityAction action)
         {
-            button.onClick.RemoveAllListeners();
             button.onClick.AddListener(action);
         }
     }
