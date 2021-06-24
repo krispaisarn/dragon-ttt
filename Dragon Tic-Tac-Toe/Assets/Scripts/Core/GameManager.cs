@@ -33,6 +33,8 @@ public class GameManager : BaseMono
         if (Input.GetKeyDown(KeyCode.R))
             RestartGame();
 
+        gameController.GameUpdate();
+
     }
 
     private void RestartGame()

@@ -31,6 +31,9 @@ public class GridSpace : MonoBehaviour
 
     public void SetGridMark(MarkType markType = MarkType.None)
     {
+        if (mark != MarkType.None)//Prevent button spamming
+            return;
+
         mark = _gameController.currentTurn;
         SetMarkImage(mark);
         _gameController.CheckCondition(this);

@@ -10,6 +10,8 @@ public class GameController : BaseMono
     public GameManager gameManager { get => GameManager.Instance; }
     public UIManager uiManager { get => gameManager.uIManager; }
 
+    public bool isGamePlaying;
+
     [Header("XO Sprite")]
     public Sprite spriteXmark;
     public Sprite spriteOmark;
@@ -20,7 +22,9 @@ public class GameController : BaseMono
 
     private List<GridSpace> _gridSpaces = new List<GridSpace>();
 
+    // For debugging
     public bool isSkip;
+
     public override void Initialize()
     {
         _gridSpaces.Clear();
@@ -50,6 +54,7 @@ public class GameController : BaseMono
     {
         currentTurn = (currentTurn == MarkType.X) ? MarkType.O : MarkType.X;
         debugText.text = currentTurn.ToString();
+        timerCount = gameManager.gameSettings.gameSettingsData.time;
     }
 
     public void CheckCondition(GridSpace gridSpace = null)
@@ -172,6 +177,7 @@ public class GameController : BaseMono
     }
     int xCount, oCount;
     public int roundCount;
+    public float timerCount;
 
     IEnumerator OnRestartRound()
     {
@@ -190,6 +196,27 @@ public class GameController : BaseMono
     public void RestartRound()
     {
         StartCoroutine(OnRestartRound());
+    }
+
+    public void GameUpdate()
+    {
+        if (!isGamePlaying)
+            return;
+
+        uiManager.SetTimer((int)timerCount);
+        timerCount -= Time.deltaTime;
+
+        if (timerCount <= 0)
+        {
+
+            int randIndex = Random.Range(0, _gridSpaces.Count);
+            while (_gridSpaces[randIndex].mark != MarkType.None)
+            {
+                randIndex = Random.Range(0, _gridSpaces.Count);
+            }
+
+            _gridSpaces[randIndex].SetGridMark(currentTurn);
+        }
     }
 }
 
