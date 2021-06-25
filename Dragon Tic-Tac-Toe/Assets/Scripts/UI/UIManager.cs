@@ -189,23 +189,24 @@ namespace TTT.UI
         IEnumerator OnShowLoading(GameScreen gameScreen = GameScreen.Menu)
         {
             float animationDuration = 2.5f;
-            yield return new WaitForSeconds(animationDuration/2f);
+            yield return new WaitForSeconds(animationDuration / 2f);
 
             if (gameScreen == GameScreen.Gameplay)
             {
                 _gameSettingsBoard.SetActive(false);
                 _gameplayGroup.SetActive(true);
                 _pauseButton.gameObject.SetActive(true);
+                gameManager.gameController.isGamePlaying = true;
             }
             else if (gameScreen == GameScreen.Menu)
             {
                 _gameSettingsBoard.SetActive(true);
                 _gameplayGroup.SetActive(false);
                 _pauseButton.gameObject.SetActive(false);
+                gameManager.gameController.isGamePlaying = false;
             }
 
-            yield return new WaitForSeconds(animationDuration/2f);
-            gameManager.gameController.isGamePlaying = true;
+            yield return new WaitForSeconds(animationDuration / 2f);
             gameManager.isGamePause = false;
         }
 
