@@ -16,9 +16,14 @@ public class GameController : BaseMono
     public Sprite spriteXmark;
     public Sprite spriteOmark;
 
+    [Header("Gameplay")]
     public MarkType currentTurn;
-    public TextMeshProUGUI debugText;
+    public int roundCount;
+    public float timerCount;
     public Transform gridGroup;
+    public TextMeshProUGUI debugText;
+
+    private int xCount, oCount;
 
     private List<GridSpace> _gridSpaces = new List<GridSpace>();
 
@@ -33,6 +38,8 @@ public class GameController : BaseMono
             _gridSpaces[i].tilePos = new Vector2(i % size, i / size);
             _gridSpaces[i].Initialize();
         }
+        xCount = 0;
+        oCount = 0;
 
         RandomTurn();
 
@@ -59,7 +66,6 @@ public class GameController : BaseMono
 
     public void CheckCondition(GridSpace gridSpace = null)
     {
-        ChangeTurn();
 
         bool isGameEnd = false;
         if (SearchNextNode(gridSpace))
@@ -81,6 +87,8 @@ public class GameController : BaseMono
             GameEnd();
             return;
         }
+
+        ChangeTurn();
 
         bool SearchNextNode(GridSpace nodex)
         {
@@ -165,6 +173,7 @@ public class GameController : BaseMono
 
         uiManager.SetRoundSlot(currentTurn, roundWinnderCount);
 
+
         if (xCount < roundCount && oCount < roundCount)
         {
             RestartRound();
@@ -175,9 +184,6 @@ public class GameController : BaseMono
             isGamePlaying = false;
         }
     }
-    int xCount, oCount;
-    public int roundCount;
-    public float timerCount;
 
     public void RestartRound()
     {
@@ -195,12 +201,12 @@ public class GameController : BaseMono
             grid.Reset();
         }
 
-        RandomTurn();
+        ChangeTurn();
     }
 
     public void RestartGame()
     {
-        uiManager.ShowLoading();
+        uiManager.ShowLoading(UIManager.GameScreen.Gameplay);
         uiManager.SetTopLayout(gameManager.gameSettings.gameSettingsData);
         uiManager.SetBoardSize(gameManager.gameSettings.gameSettingsData.size);
         Initialize();

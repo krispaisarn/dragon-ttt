@@ -16,6 +16,8 @@ public class GameManager : BaseMono
     public GameController gameController;
     public GameSettings gameSettings;
     public UIManager uIManager;
+    public bool isGamePause;
+    public bool isReleaseUI;
 
     private void Awake()
     {
@@ -29,6 +31,8 @@ public class GameManager : BaseMono
     {
         gameSettings.Initialize();
         uIManager.Initialize();
+        if (isReleaseUI)
+            uIManager.SetUpReleaseUI();
 
         if (isSkip)
             gameController.Initialize();
@@ -38,6 +42,9 @@ public class GameManager : BaseMono
     {
         if (Input.GetKeyDown(KeyCode.R))
             RestartGame();
+
+        if (isGamePause)
+            return;
 
         gameController.GameUpdate();
 

@@ -12,14 +12,18 @@ public class GridSpace : MonoBehaviour
     [SerializeField] private Image markImage;
     private GameController _gameController { get => GameManager.Instance.gameController; }
     private Button _button;
-
+    private bool isInitialized;
     public void Initialize()
     {
-        _button = this.GetComponent<Button>();
-        _button.onClick.RemoveAllListeners();
-        _button.onClick.AddListener(() => SetGridMark());
+        if (!isInitialized)
+        {
+            _button = this.GetComponent<Button>();
+            _button.onClick.RemoveAllListeners();
+            _button.onClick.AddListener(() => SetGridMark());
+            isInitialized = true;
+        }
 
-        markImage.gameObject.SetActive(false);
+        Reset();
     }
 
     public void Reset()
@@ -32,6 +36,9 @@ public class GridSpace : MonoBehaviour
 
     public void SetGridMark(MarkType markType = MarkType.None)
     {
+        if (!_gameController.isGamePlaying)
+            return;
+
         if (mark != MarkType.None)//Prevent button spamming
             return;
 

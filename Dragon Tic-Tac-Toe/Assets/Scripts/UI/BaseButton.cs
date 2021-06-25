@@ -12,9 +12,11 @@ namespace TTT.UI
     {
         [ReadOnly] public Button button;
         public TextMeshProUGUI tmpText;
+        private bool isInitialized;
         public override void Initialize()
         {
             button = this.GetComponent<Button>();
+            isInitialized = true;
         }
         public void SetText(string text)
         {
@@ -24,6 +26,9 @@ namespace TTT.UI
         }
         public void SetEvent(UnityAction action)
         {
+            if (!isInitialized)
+                Initialize();
+                
             button.onClick.AddListener(action);
         }
     }

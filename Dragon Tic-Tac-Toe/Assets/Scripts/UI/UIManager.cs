@@ -11,6 +11,7 @@ namespace TTT.UI
     {
         [SerializeField] private Animator _loadingAnimator;
         [SerializeField] private GameObject _gameSettingsBoard;
+        [SerializeField] private GameObject _gameplayGroup;
         [SerializeField] private GridLayoutGroup _gridLayoutGroup;
 
         [Header("Player Tag")]
@@ -24,16 +25,53 @@ namespace TTT.UI
 
         [Header("Result")]
         [SerializeField] private CanvasGroup _resultCanvas;
+        [SerializeField] private BaseButton _playAgainButton;
+        [SerializeField] private BaseButton _resultMenuButton;
+
+        [Header("Pause Menu")]
+        [SerializeField] private GameObject _pauseMenu;
+        [SerializeField] private BaseButton _pauseButton;
+        [SerializeField] private BaseButton _continueButton;
+        [SerializeField] private BaseButton _restartButton;
+        [SerializeField] private BaseButton _menuButton;
 
         private RoundSlot[] _xRoundSlots;
         private RoundSlot[] _oRoundSlots;
         public GameManager gameManager { get => GameManager.Instance; }
 
+        public enum GameScreen
+        {
+            Menu,
+            Gameplay
+        }
+
+        private bool isInitialized;
         public override void Initialize()
         {
+            if (isInitialized)
+                return;
+
             _xRoundSlots = _xRoundGroup.GetComponentsInChildren<RoundSlot>();
             _oRoundSlots = _oRoundGroup.GetComponentsInChildren<RoundSlot>();
 
+            _pauseButton.SetEvent(() => ShowPauseMenu());
+            _continueButton.SetEvent(() => HidePauseMenu());
+            _restartButton.SetEvent(() => RestartGame());
+            _menuButton.SetEvent(() => GoToMenu());
+
+            _playAgainButton.SetEvent(() => RestartGame());
+            _resultMenuButton.SetEvent(() => GoToMenu());
+
+            isInitialized = true;
+        }
+
+        public void SetUpReleaseUI()
+        {
+            _gameplayGroup.SetActive(false);
+            _gameSettingsBoard.SetActive(true);
+            _pauseButton.gameObject.SetActive(false);
+            _resultCanvas.gameObject.SetActive(false);
+            _pauseMenu.SetActive(false);
         }
 
         public void ShowResult()
@@ -110,25 +148,44 @@ namespace TTT.UI
                 }
             }
 
+            float screenRatio = (float)Screen.width / (float)Screen.height;
+
             _gridLayoutGroup.constraintCount = size;
-            _gridLayoutGroup.cellSize = new Vector2(360 - (size * 30), 360 - (size * 30));
-            _gridLayoutGroup.spacing = new Vector2(45 - (size * 5), 45 - (size * 5));
+
+            _gridLayoutGroup.cellSize = new Vector2(410 - (size * 25) - (screenRatio * 50), 410 - (size * 25) - (screenRatio * 50));
+            _gridLayoutGroup.spacing = new Vector2(45 - (size * 3) - (screenRatio * 5), 45 - (size * 3) - (screenRatio * 5));
         }
 
-        public void ShowLoading()
+        public void ShowLoading(GameScreen gameScreen = GameScreen.Menu)
         {
             _loadingAnimator.SetTrigger("Play");
-            StartCoroutine(OnShowLoading());
+            StartCoroutine(OnShowLoading(gameScreen));
         }
 
-        IEnumerator OnShowLoading()
+        IEnumerator OnShowLoading(GameScreen gameScreen = GameScreen.Menu)
         {
             float animationDuration = _loadingAnimator.runtimeAnimatorController.animationClips[0].averageDuration / 2f;
             yield return new WaitForSeconds(animationDuration);
-            _gameSettingsBoard.SetActive(false);
+
+            if (gameScreen == GameScreen.Gameplay)
+            {
+                _gameSettingsBoard.SetActive(false);
+                _gameplayGroup.SetActive(true);
+                _pauseButton.gameObject.SetActive(true);
+            }
+            else if (gameScreen == GameScreen.Menu)
+            {
+                _gameSettingsBoard.SetActive(true);
+                _gameplayGroup.SetActive(false);
+                _pauseButton.gameObject.SetActive(false);
+            }
+
             yield return new WaitForSeconds(animationDuration);
             gameManager.gameController.isGamePlaying = true;
+            gameManager.isGamePause = false;
         }
+
+
 
         public void ChangeTurn(MarkType markType)
         {
@@ -144,5 +201,28 @@ namespace TTT.UI
             }
         }
 
+        public void ShowPauseMenu()
+        {
+            gameManager.isGamePause = true;
+            _pauseMenu.SetActive(true);
+        }
+
+        public void HidePauseMenu()
+        {
+            gameManager.isGamePause = false;
+            _pauseMenu.SetActive(false);
+        }
+
+        public void RestartGame()
+        {
+            _pauseMenu.SetActive(false);
+            gameManager.gameController.RestartGame();
+        }
+
+        public void GoToMenu()
+        {
+            HidePauseMenu();
+            ShowLoading(UIManager.GameScreen.Menu);
+        }
     }
 }
