@@ -161,6 +161,8 @@ namespace TTT.Settings
         {
             _uiManager.ShowLoading();
             _uiManager.SetTopLayout(gameSettingsData);
+            _uiManager.SetBoardSize(gameSettingsData.size);
+            _gameController.Initialize();
         }
 
     }

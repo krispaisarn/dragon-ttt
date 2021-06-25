@@ -23,8 +23,8 @@ public class GameManager : BaseMono
 
     public override void Initialize()
     {
-        gameController.Initialize();
         gameSettings.Initialize();
+        gameController.Initialize();
         uIManager.Initialize();
     }
 

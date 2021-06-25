@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e49322b5efc984318b39cfb622358aab, type: 3}
   m_Name: DefaultSettings
   m_EditorClassIdentifier: 
-  round: 3
-  time: 10
-  size: 4
+  round: 7
+  time: 20
+  size: 7
   rounds: 01000000030000000500000007000000
   times: 000000000a000000140000001e000000
   minSize: 3
-  maxSize: 9
+  maxSize: 7

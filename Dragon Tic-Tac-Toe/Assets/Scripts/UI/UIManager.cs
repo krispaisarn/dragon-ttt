@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TTT.Settings;
 using TMPro;
+using UnityEngine.UI;
 
 namespace TTT.UI
 {
@@ -10,6 +11,7 @@ namespace TTT.UI
     {
         [SerializeField] private Animator _loadingAnimator;
         [SerializeField] private GameObject _gameSettingsBoard;
+        [SerializeField] private GridLayoutGroup _gridLayoutGroup;
 
         [Header("Top Layout")]
         [SerializeField] private Transform _xRoundGroup;
@@ -87,6 +89,26 @@ namespace TTT.UI
         public void SetTimer(float timerCount)
         {
             _timerTmp.text = timerCount.ToString();
+        }
+
+        public void SetBoardSize(int size)
+        {
+            for (int i = 0; i < _gridLayoutGroup.transform.childCount; i++)
+            {
+                GameObject gridObj = _gridLayoutGroup.transform.GetChild(i).gameObject;
+                if (size * size > i)
+                {
+                    gridObj.SetActive(true);
+                }
+                else
+                {
+                    gridObj.SetActive(false);
+                }
+            }
+
+            _gridLayoutGroup.constraintCount = size;
+            _gridLayoutGroup.cellSize = new Vector2(360 - (size * 30), 360 - (size * 30));
+            _gridLayoutGroup.spacing = new Vector2(45 - (size * 5), 45 - (size * 5));
         }
 
         public void ShowLoading()

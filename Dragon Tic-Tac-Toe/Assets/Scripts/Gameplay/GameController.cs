@@ -30,9 +30,10 @@ public class GameController : BaseMono
         _gridSpaces.Clear();
         _gridSpaces.AddRange(gridGroup.GetComponentsInChildren<GridSpace>());
 
+        int size = gameManager.gameSettings.gameSettingsData.size;
         for (int i = 0; i < _gridSpaces.Count; i++)
         {
-            _gridSpaces[i].tilePos = new Vector2(i % 4, i / 4);
+            _gridSpaces[i].tilePos = new Vector2(i % size, i / size);
             _gridSpaces[i].Initialize();
         }
 
@@ -172,7 +173,7 @@ public class GameController : BaseMono
         }
         else
         {
-            debugText.text = "Game Ends!!!";
+        
         }
     }
     int xCount, oCount;

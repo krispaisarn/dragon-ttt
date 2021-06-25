@@ -27,6 +27,7 @@ public class GridSpace : MonoBehaviour
         mark = MarkType.None;
         markImage.sprite = null;
         _button.interactable = true;
+        markImage.gameObject.SetActive(false);
     }
 
     public void SetGridMark(MarkType markType = MarkType.None)
