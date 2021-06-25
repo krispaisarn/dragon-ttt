@@ -9,6 +9,10 @@ public class GameManager : BaseMono
 {
     public static GameManager Instance;
     // Start is called before the first frame update
+
+    // For debugging
+    public bool isSkip;
+
     public GameController gameController;
     public GameSettings gameSettings;
     public UIManager uIManager;
@@ -24,8 +28,10 @@ public class GameManager : BaseMono
     public override void Initialize()
     {
         gameSettings.Initialize();
-        gameController.Initialize();
         uIManager.Initialize();
+
+        if (isSkip)
+            gameController.Initialize();
     }
 
     private void Update()

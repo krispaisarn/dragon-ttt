@@ -22,9 +22,6 @@ public class GameController : BaseMono
 
     private List<GridSpace> _gridSpaces = new List<GridSpace>();
 
-    // For debugging
-    public bool isSkip;
-
     public override void Initialize()
     {
         _gridSpaces.Clear();
@@ -39,7 +36,7 @@ public class GameController : BaseMono
 
         RandomTurn();
 
-        if (isSkip)
+        if (gameManager.isSkip)
         {
             uiManager.SetTopLayout(gameManager.gameSettings.gameSettingsData);
         }
@@ -48,18 +45,22 @@ public class GameController : BaseMono
     void RandomTurn()
     {
         currentTurn = (Random.Range(0, 2) == 1) ? MarkType.O : MarkType.X;
+        uiManager.ChangeTurn(currentTurn);
         debugText.text = currentTurn.ToString();
     }
 
     private void ChangeTurn()
     {
         currentTurn = (currentTurn == MarkType.X) ? MarkType.O : MarkType.X;
+        uiManager.ChangeTurn(currentTurn);
         debugText.text = currentTurn.ToString();
         timerCount = gameManager.gameSettings.gameSettingsData.time;
     }
 
     public void CheckCondition(GridSpace gridSpace = null)
     {
+        ChangeTurn();
+
         bool isGameEnd = false;
         if (SearchNextNode(gridSpace))
         {
@@ -81,8 +82,6 @@ public class GameController : BaseMono
             return;
         }
 
-        ChangeTurn();
-
         bool SearchNextNode(GridSpace nodex)
         {
             foreach (var anode in FindNeighborGrids(nodex))
@@ -97,7 +96,6 @@ public class GameController : BaseMono
             }
             return false;
         }
-
     }
 
     List<GridSpace> FindNeighborGrids(GridSpace gridSpace)
@@ -173,12 +171,18 @@ public class GameController : BaseMono
         }
         else
         {
-        
+            uiManager.ShowResult();
+            isGamePlaying = false;
         }
     }
     int xCount, oCount;
     public int roundCount;
     public float timerCount;
+
+    public void RestartRound()
+    {
+        StartCoroutine(OnRestartRound());
+    }
 
     IEnumerator OnRestartRound()
     {
@@ -194,14 +198,20 @@ public class GameController : BaseMono
         RandomTurn();
     }
 
-    public void RestartRound()
+    public void RestartGame()
     {
-        StartCoroutine(OnRestartRound());
+        uiManager.ShowLoading();
+        uiManager.SetTopLayout(gameManager.gameSettings.gameSettingsData);
+        uiManager.SetBoardSize(gameManager.gameSettings.gameSettingsData.size);
+        Initialize();
     }
 
     public void GameUpdate()
     {
         if (!isGamePlaying)
+            return;
+
+        if (timerCount == 0)
             return;
 
         uiManager.SetTimer((int)timerCount);

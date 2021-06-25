@@ -31,7 +31,6 @@ namespace TTT.Settings
         private UIManager _uiManager { get => GameManager.Instance.uIManager; }
         private GameController _gameController { get => GameManager.Instance.gameController; }
 
-
         public override void Initialize()
         {
             // If no save
@@ -159,10 +158,7 @@ namespace TTT.Settings
 
         public void StartGame()
         {
-            _uiManager.ShowLoading();
-            _uiManager.SetTopLayout(gameSettingsData);
-            _uiManager.SetBoardSize(gameSettingsData.size);
-            _gameController.Initialize();
+            _gameController.RestartGame();
         }
 
     }

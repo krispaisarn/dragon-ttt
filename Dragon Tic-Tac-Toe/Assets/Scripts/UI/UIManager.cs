@@ -13,6 +13,10 @@ namespace TTT.UI
         [SerializeField] private GameObject _gameSettingsBoard;
         [SerializeField] private GridLayoutGroup _gridLayoutGroup;
 
+        [Header("Player Tag")]
+        [SerializeField] GameObject _xTag;
+        [SerializeField] GameObject _oTag;
+
         [Header("Top Layout")]
         [SerializeField] private Transform _xRoundGroup;
         [SerializeField] private Transform _oRoundGroup;
@@ -124,6 +128,20 @@ namespace TTT.UI
             _gameSettingsBoard.SetActive(false);
             yield return new WaitForSeconds(animationDuration);
             gameManager.gameController.isGamePlaying = true;
+        }
+
+        public void ChangeTurn(MarkType markType)
+        {
+            if (markType == MarkType.X)
+            {
+                _xTag.SetActive(true);
+                _oTag.SetActive(false);
+            }
+            else if (markType == MarkType.O)
+            {
+                _oTag.SetActive(true);
+                _xTag.SetActive(false);
+            }
         }
 
     }
