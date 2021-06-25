@@ -10511,6 +10511,7 @@ MonoBehaviour:
   gameSettings: {fileID: 448585876}
   uIManager: {fileID: 1452606132}
   isGamePause: 0
+  isReleaseUI: 1
 --- !u!4 &1007877302
 Transform:
   m_ObjectHideFlags: 0
