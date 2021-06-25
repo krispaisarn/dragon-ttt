@@ -15,7 +15,12 @@ namespace TTT.UI
         private bool isInitialized;
         public override void Initialize()
         {
+            if (isInitialized)
+                return;
+
             button = this.GetComponent<Button>();
+            button.onClick.AddListener(() => GameManager.Instance.audioManager.PlayButtonClick());
+
             isInitialized = true;
         }
         public void SetText(string text)
@@ -28,7 +33,7 @@ namespace TTT.UI
         {
             if (!isInitialized)
                 Initialize();
-                
+
             button.onClick.AddListener(action);
         }
     }

@@ -20,6 +20,8 @@ public class GridSpace : MonoBehaviour
             _button = this.GetComponent<Button>();
             _button.onClick.RemoveAllListeners();
             _button.onClick.AddListener(() => SetGridMark());
+            _button.onClick.AddListener(() => GameManager.Instance.audioManager.PlayMark());
+
             isInitialized = true;
         }
 

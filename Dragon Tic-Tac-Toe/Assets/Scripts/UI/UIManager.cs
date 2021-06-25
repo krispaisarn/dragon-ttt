@@ -189,7 +189,7 @@ namespace TTT.UI
         IEnumerator OnShowLoading(GameScreen gameScreen = GameScreen.Menu)
         {
             float animationDuration = 2.5f;
-            yield return new WaitForSeconds(animationDuration / 2f);
+            yield return new WaitForSeconds(animationDuration/2f);
 
             if (gameScreen == GameScreen.Gameplay)
             {
@@ -204,7 +204,7 @@ namespace TTT.UI
                 _pauseButton.gameObject.SetActive(false);
             }
 
-            yield return new WaitForSeconds(animationDuration / 2f);
+            yield return new WaitForSeconds(animationDuration/2f);
             gameManager.gameController.isGamePlaying = true;
             gameManager.isGamePause = false;
         }
@@ -242,6 +242,7 @@ namespace TTT.UI
             _pauseMenu.SetActive(false);
             HideResult();
             gameManager.gameController.RestartGame();
+            ShowRoundResult(MarkType.None);
         }
 
         public void GoToMenu()
@@ -250,7 +251,8 @@ namespace TTT.UI
             HideResult();
             ShowLoading(UIManager.GameScreen.Menu);
             gameManager.characterManager.Reset();
-            SetUpReleaseUI();
+            ShowRoundResult(MarkType.None);
+            gameManager.audioManager.ToggleBGM(true);
         }
 
         public void ShowRoundResult(MarkType winnerMark, bool isDraw = false)

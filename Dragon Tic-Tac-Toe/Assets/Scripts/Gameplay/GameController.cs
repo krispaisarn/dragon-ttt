@@ -5,12 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using TTT.Character;
+using TTT.Audio;
 
 public class GameController : BaseMono
 {
     public GameManager gameManager { get => GameManager.Instance; }
     public UIManager uiManager { get => gameManager.uIManager; }
     public CharacterManager characterManager { get => gameManager.characterManager; }
+    public AudioManager audioManager { get => gameManager.audioManager; }
 
     public bool isGamePlaying;
 
@@ -212,12 +214,17 @@ public class GameController : BaseMono
             characterManager.PlayAnimation(currentTurn, CharacterManager.CharAnim.WinRound);
             characterManager.PlayAnimation(GetOppositePlayer(currentTurn), CharacterManager.CharAnim.LoseRound);
 
+            audioManager.PlayRoundEnd();
+
             RestartRound();
         }
         else
         {
             characterManager.PlayAnimation(currentTurn, CharacterManager.CharAnim.WinGame);
             characterManager.PlayAnimation(GetOppositePlayer(currentTurn), CharacterManager.CharAnim.LoseGame);
+
+            audioManager.PlayResult();
+            audioManager.ToggleBGM(false);
 
             uiManager.ShowResult(currentTurn);
             isGamePlaying = false;
@@ -255,6 +262,7 @@ public class GameController : BaseMono
         uiManager.SetTopLayout(gameManager.gameSettings.gameSettingsData);
         uiManager.SetBoardSize(gameManager.gameSettings.gameSettingsData.size);
         Initialize();
+        audioManager.ToggleBGM(true);
     }
 
     public void GameUpdate()

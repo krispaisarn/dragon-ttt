@@ -2,17 +2,57 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+namespace TTT.Audio
 {
-    // Start is called before the first frame update
-    void Start()
+    public class AudioManager : BaseMono
     {
-        
-    }
+        public AudioSource sfxPlayer;
+        public AudioSource bgmPlayer;
+        [Header("AudioClip")]
+        [SerializeField] private AudioClip buttonSFX;
+        [SerializeField] private AudioClip resultSFX;
+        [SerializeField] private AudioClip roundEndSFX;
+        [SerializeField] private AudioClip placeMarkSFX;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private bool isInitialized;
+        public override void Initialize()
+        {
+            if (isInitialized)
+                return;
+
+            isInitialized = true;
+        }
+
+        public void PlayButtonClick()
+        {
+            sfxPlayer.PlayOneShot(buttonSFX);
+        }
+
+        public void PlayResult()
+        {
+            sfxPlayer.PlayOneShot(resultSFX);
+        }
+
+        public void PlayRoundEnd()
+        {
+            sfxPlayer.PlayOneShot(roundEndSFX);
+        }
+        public void PlayMark()
+        {
+            sfxPlayer.PlayOneShot(placeMarkSFX);
+        }
+
+        public void ToggleBGM(bool isPlay)
+        {
+            if (!isPlay)
+            {
+                bgmPlayer.Stop();
+            }
+            else
+            {
+                if (!bgmPlayer.isPlaying)
+                    bgmPlayer.Play();
+            }
+        }
     }
 }
