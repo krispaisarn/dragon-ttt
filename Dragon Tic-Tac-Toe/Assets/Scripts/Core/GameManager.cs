@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TTT.Settings;
 using TTT.UI;
+using TTT.Character;
 
 public class GameManager : BaseMono
 {
@@ -16,6 +17,7 @@ public class GameManager : BaseMono
     public GameController gameController;
     public GameSettings gameSettings;
     public UIManager uIManager;
+    public CharacterManager characterManager;
     public bool isGamePause;
     public bool isReleaseUI;
 
@@ -29,8 +31,10 @@ public class GameManager : BaseMono
 
     public override void Initialize()
     {
+        characterManager.Initialize();
         gameSettings.Initialize();
         uIManager.Initialize();
+
         if (isReleaseUI)
             uIManager.SetUpReleaseUI();
 

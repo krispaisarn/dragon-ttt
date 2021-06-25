@@ -4,11 +4,13 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using TTT.Character;
 
 public class GameController : BaseMono
 {
     public GameManager gameManager { get => GameManager.Instance; }
     public UIManager uiManager { get => gameManager.uIManager; }
+    public CharacterManager characterManager { get => gameManager.characterManager; }
 
     public bool isGamePlaying;
 
@@ -41,6 +43,9 @@ public class GameController : BaseMono
         xCount = 0;
         oCount = 0;
 
+        characterManager.PlayAnimation(MarkType.X, CharacterManager.CharAnim.Idle);
+        characterManager.PlayAnimation(MarkType.O, CharacterManager.CharAnim.Idle);
+
         RandomTurn();
 
         if (gameManager.isSkip)
@@ -62,10 +67,13 @@ public class GameController : BaseMono
         uiManager.ChangeTurn(currentTurn);
         debugText.text = currentTurn.ToString();
         timerCount = gameManager.gameSettings.gameSettingsData.time;
+
+        characterManager.PlayAnimation(currentTurn, CharacterManager.CharAnim.OnTurn);
     }
 
     public void CheckCondition(GridSpace gridSpace = null)
     {
+        characterManager.PlayAnimation(currentTurn, CharacterManager.CharAnim.Mark);
 
         bool isGameEnd = false;
         if (SearchNextNode(gridSpace))
@@ -88,6 +96,13 @@ public class GameController : BaseMono
             return;
         }
 
+        if (CheckGridFull())
+        {
+            GameEnd(true);//Set draw
+            return;
+        }
+
+
         ChangeTurn();
 
         bool SearchNextNode(GridSpace nodex)
@@ -103,6 +118,18 @@ public class GameController : BaseMono
                 }
             }
             return false;
+        }
+
+        bool CheckGridFull()
+        {
+            foreach (var grid in _gridSpaces)
+            {
+                if (grid.mark == MarkType.None)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 
@@ -152,35 +179,47 @@ public class GameController : BaseMono
         return gridNeighbors;
     }
 
-    private void GameEnd()
+    private void GameEnd(bool isDraw = false)
     {
-        //uiManager.ShowResult();
-
-        int roundWinnderCount = 0;
-        if (currentTurn == MarkType.X)
+        int roundWinnerCount = 0;
+        if (!isDraw)
         {
-            xCount++;
-            roundWinnderCount = xCount;
+            if (currentTurn == MarkType.X)
+            {
+                xCount++;
+                roundWinnerCount = xCount;
 
-        }
-        else if (currentTurn == MarkType.O)
-        {
-            oCount++;
-            roundWinnderCount = oCount;
+            }
+            else if (currentTurn == MarkType.O)
+            {
+                oCount++;
+                roundWinnerCount = oCount;
+            }
+            else
+                Debug.Log("Incorrect Type!!!");
+
+            uiManager.ShowRoundResult(currentTurn);
         }
         else
-            Debug.Log("Incorrect Type!!!");
+        {
+            uiManager.ShowRoundResult(currentTurn, true); // Show draw text
+        }
 
-        uiManager.SetRoundSlot(currentTurn, roundWinnderCount);
-
+        uiManager.SetRoundSlot(currentTurn, roundWinnerCount);
 
         if (xCount < roundCount && oCount < roundCount)
         {
+            characterManager.PlayAnimation(currentTurn, CharacterManager.CharAnim.WinRound);
+            characterManager.PlayAnimation(GetOppositePlayer(currentTurn), CharacterManager.CharAnim.LoseRound);
+
             RestartRound();
         }
         else
         {
-            uiManager.ShowResult();
+            characterManager.PlayAnimation(currentTurn, CharacterManager.CharAnim.WinGame);
+            characterManager.PlayAnimation(GetOppositePlayer(currentTurn), CharacterManager.CharAnim.LoseGame);
+
+            uiManager.ShowResult(currentTurn);
             isGamePlaying = false;
         }
     }
@@ -193,8 +232,13 @@ public class GameController : BaseMono
     IEnumerator OnRestartRound()
     {
         debugText.text = currentTurn + " Win round";
+        isGamePlaying = false;
+        yield return new WaitForSeconds(1.5f);
+        isGamePlaying = true;
+        uiManager.ShowRoundResult(MarkType.None);
 
-        yield return new WaitForSeconds(1);
+        characterManager.PlayAnimation(currentTurn, CharacterManager.CharAnim.Idle);
+        characterManager.PlayAnimation(currentTurn, CharacterManager.CharAnim.Idle);
 
         foreach (var grid in _gridSpaces)
         {
@@ -206,6 +250,7 @@ public class GameController : BaseMono
 
     public void RestartGame()
     {
+        isGamePlaying = false;
         uiManager.ShowLoading(UIManager.GameScreen.Gameplay);
         uiManager.SetTopLayout(gameManager.gameSettings.gameSettingsData);
         uiManager.SetBoardSize(gameManager.gameSettings.gameSettingsData.size);
@@ -234,6 +279,11 @@ public class GameController : BaseMono
 
             _gridSpaces[randIndex].SetGridMark(currentTurn);
         }
+    }
+
+    private MarkType GetOppositePlayer(MarkType markType)
+    {
+        return (markType == MarkType.X) ? MarkType.O : MarkType.X;
     }
 }
 

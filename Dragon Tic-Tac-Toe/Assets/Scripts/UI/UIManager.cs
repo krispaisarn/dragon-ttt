@@ -15,8 +15,10 @@ namespace TTT.UI
         [SerializeField] private GridLayoutGroup _gridLayoutGroup;
 
         [Header("Player Tag")]
-        [SerializeField] GameObject _xTag;
-        [SerializeField] GameObject _oTag;
+        [SerializeField] private GameObject _xTag;
+        [SerializeField] private GameObject _oTag;
+        [SerializeField] private TextMeshProUGUI _xRoundResultTmp;
+        [SerializeField] private TextMeshProUGUI _oRoundResultTmp;
 
         [Header("Top Layout")]
         [SerializeField] private Transform _xRoundGroup;
@@ -25,6 +27,9 @@ namespace TTT.UI
 
         [Header("Result")]
         [SerializeField] private CanvasGroup _resultCanvas;
+        [SerializeField] private GameObject _xResultTag;
+        [SerializeField] private GameObject _oResultTag;
+
         [SerializeField] private BaseButton _playAgainButton;
         [SerializeField] private BaseButton _resultMenuButton;
 
@@ -72,11 +77,30 @@ namespace TTT.UI
             _pauseButton.gameObject.SetActive(false);
             _resultCanvas.gameObject.SetActive(false);
             _pauseMenu.SetActive(false);
+            _xRoundResultTmp.text = "";
+            _oRoundResultTmp.text = "";
         }
 
-        public void ShowResult()
+        public void ShowResult(MarkType winnerMark)
         {
+            _xResultTag.SetActive(false);
+            _oResultTag.SetActive(false);
+
+            if (winnerMark == MarkType.X)
+            {
+                _xResultTag.SetActive(true);
+            }
+            else if (winnerMark == MarkType.O)
+            {
+                _oResultTag.SetActive(true);
+            }
+
             _resultCanvas.gameObject.SetActive(true);
+        }
+
+        public void HideResult()
+        {
+            _resultCanvas.gameObject.SetActive(false);
         }
 
         public void SetTopLayout(GameSettingsData settingsData)
@@ -164,8 +188,8 @@ namespace TTT.UI
 
         IEnumerator OnShowLoading(GameScreen gameScreen = GameScreen.Menu)
         {
-            float animationDuration = _loadingAnimator.runtimeAnimatorController.animationClips[0].averageDuration / 2f;
-            yield return new WaitForSeconds(animationDuration);
+            float animationDuration = 2.5f;
+            yield return new WaitForSeconds(animationDuration / 2f);
 
             if (gameScreen == GameScreen.Gameplay)
             {
@@ -180,7 +204,7 @@ namespace TTT.UI
                 _pauseButton.gameObject.SetActive(false);
             }
 
-            yield return new WaitForSeconds(animationDuration);
+            yield return new WaitForSeconds(animationDuration / 2f);
             gameManager.gameController.isGamePlaying = true;
             gameManager.isGamePause = false;
         }
@@ -216,13 +240,42 @@ namespace TTT.UI
         public void RestartGame()
         {
             _pauseMenu.SetActive(false);
+            HideResult();
             gameManager.gameController.RestartGame();
         }
 
         public void GoToMenu()
         {
             HidePauseMenu();
+            HideResult();
             ShowLoading(UIManager.GameScreen.Menu);
+            gameManager.characterManager.Reset();
+            SetUpReleaseUI();
+        }
+
+        public void ShowRoundResult(MarkType winnerMark, bool isDraw = false)
+        {
+            _oRoundResultTmp.text = "";
+            _xRoundResultTmp.text = "";
+
+            if (winnerMark == MarkType.None)
+                return;
+
+            if (isDraw)
+            {
+                _oRoundResultTmp.text = "Draw..";
+                _xRoundResultTmp.text = "Draw..";
+                return;
+            }
+
+            if (winnerMark == MarkType.X)
+            {
+                _xRoundResultTmp.text = "Wins!";
+            }
+            else if (winnerMark == MarkType.O)
+            {
+                _oRoundResultTmp.text = "Wins!";
+            }
         }
     }
 }
