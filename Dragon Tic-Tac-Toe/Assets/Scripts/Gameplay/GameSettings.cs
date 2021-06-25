@@ -58,6 +58,7 @@ namespace TTT.Settings
                 else
                 {
                     button = Instantiate(_roundSettingsButton, Vector3.zero, Quaternion.identity, _roundSettingsButton.transform.parent);
+                    button.transform.localPosition = Vector3.zero;
                 }
                 button.Initialize();
                 button.SetText(roundCount.ToString());
@@ -85,6 +86,7 @@ namespace TTT.Settings
                 else
                 {
                     button = Instantiate(_timeSettingsButton, Vector3.zero, Quaternion.identity, _timeSettingsButton.transform.parent);
+                    button.transform.localPosition = Vector3.zero;
                 }
                 button.Initialize();
                 button.SetText(timeCount.ToString());
